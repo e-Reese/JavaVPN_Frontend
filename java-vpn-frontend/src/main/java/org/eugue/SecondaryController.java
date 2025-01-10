@@ -3,6 +3,8 @@ package org.eugue;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javafx.scene.control.TextArea;
 
@@ -13,9 +15,11 @@ public class SecondaryController {
     public void StartClient(TextArea outputText) { // Starts client side vpn. Called from Primary controller. Should become events
         outputText.setText("Starting client VPN...");
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder(
-                "docker", "run", "--rm", "--cap-add=NET_ADMIN", "vpn-client-image"
-            );
+            String relativePath = "config/client.ovpn";
+            // Resolve the absolute path based on the current working directory
+            Path absolutePath = Paths.get(relativePath).toAbsolutePath();
+            String command = "openvpn --config " + absolutePath.toString(); 
+            ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
             processBuilder.redirectErrorStream(true);
 
             clientVpnProcess = processBuilder.start();
@@ -33,7 +37,7 @@ public class SecondaryController {
                 }
             }).start();
 
-            outputText.appendText("VPN client started successfully in Docker.\n");
+            outputText.appendText("VPN client started successfully.\n");
         } catch (IOException e) {
             outputText.appendText("Error starting VPN in Docker: " + e.getMessage() + "\n");
         }
@@ -41,6 +45,7 @@ public class SecondaryController {
 
     public void StopClient(TextArea outputText) { // Stops client side vpn. Called from Primary controller. Should become events
         outputText.setText("Stopping client VPN... ");
+        
         if (clientVpnProcess != null) {
             clientVpnProcess.destroy();
             clientVpnProcess = null;

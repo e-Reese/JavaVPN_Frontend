@@ -18,6 +18,8 @@ import javafx.scene.control.TextArea;
 
 public class PrimaryController {  
 
+    public static SecondaryController secondaryController; // just a reference to the secondary controller so values/processes persist
+
     public void StartServer(TextArea outputText) {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -36,7 +38,7 @@ public class PrimaryController {
                     System.out.println(response.body());
                     outputText.setText("Server Started:\n" + response.body());
                     // Starting Client
-                    SecondaryController secondaryController = new SecondaryController();
+                    secondaryController = new SecondaryController();
                     secondaryController.StartClient(outputText);
                 } else {
                     System.out.println("Status code: " + response.statusCode());
@@ -67,9 +69,9 @@ public class PrimaryController {
                     System.out.println(response.body());
                     System.out.println(response.statusCode());
                     outputText.setText("Server Stopped");
-                    
-                    SecondaryController secondaryController = new SecondaryController();
-                    secondaryController.StopClient(outputText);
+                    if (secondaryController != null) {
+                        secondaryController.StopClient(outputText);
+                    }
                     
                 } else {
                     System.out.println(response.statusCode());

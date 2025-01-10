@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 public class App extends Application {
 
     private static Scene scene;
+    public static PrimaryController primaryController;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -55,14 +56,18 @@ public class App extends Application {
 
     private void StartVPN(TextArea outputText) {
         // Kick off VPN startup
-        PrimaryController primaryController = new PrimaryController();
+        if (primaryController == null) {
+            primaryController = new PrimaryController();
+        }
         primaryController.StartServer(outputText); // Client starts after this. Should be refactored into events. 
     }
 
     private void StopVPN(TextArea outputText) {
         // Call backend api to stop vpn
-        PrimaryController primaryController = new PrimaryController();
-        primaryController.StopServer(outputText);
+        if (primaryController != null) {
+            primaryController = new PrimaryController();
+            primaryController.StopServer(outputText);
+        }
 
     }
 
@@ -87,6 +92,15 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch(args);
+
+        // String relativePath = "config/client.ovpn";
+        // // Resolve the absolute path based on the current working directory
+        // Path absolutePath = Paths.get(relativePath).toAbsolutePath();
+
+        // List<String> command = new ArrayList<>();
+        // command.add("openvpn");  // Ensure the OpenVPN executable is in your PATH
+        // command.add("--config");
+        // command.add(absolutePath.toString());
     }
 
 }
