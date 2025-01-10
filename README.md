@@ -10,4 +10,5 @@ Requires OpenVPN, Java 21, and JavaFX
 - Containerize.
 - More error/failsafe handling (Especially with containers).
 - More encryption.
+- Server location selection.
 - Multi-platform support.
